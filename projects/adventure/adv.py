@@ -14,7 +14,7 @@ world = World()
 # map_file = "maps/test_cross.txt"
 # map_file = "maps/test_loop.txt"
 # map_file = "maps/test_loop_fork.txt"
-map_file = "maps/main_maze.txt"
+map_file = "/Users/joshua/Desktop/CS_FLEX/modules/Graphs/projects/adventure/maps/main_maze.txt"
 
 # Loads the map into a dictionary
 room_graph=literal_eval(open(map_file, "r").read())
@@ -28,14 +28,51 @@ player = Player(world.starting_room)
 # Fill this out with directions to walk
 # traversal_path = ['n', 'n']
 traversal_path = []
+# print(World)
+
+def step_back(direction):
+    a = ['n','s','e','w']
+    b = ['s','n','w','e']
+    rtn = dict(zip(a,b))
+    return rtn[direction]
+
+def get_path(start, visited = None):
+
+    # if visited is None / visited should be a set()
+    if not visited:
+        visited = set()
+    # create a path
+    path = []
+    # add current room to visited set
+    visited.add(player.current_room.id)
+    # for dir in player.current_room.get_exits() move in that direction
+    for direction in range(1, len(player.current_room.get_exits())):
+        player.travel(player.current_room.get_exits()[-direction])
+        # if that location is not in the visited set
+        if player.current_room.id not in visited:
+            # add room to the visited set and add the direction to the path
+            visited.add(player.current_room.id)
+            path.append(player.current_room.get_exits()[-direction])
+            # concatincate path with the recursed return of player.current_room.id
+            path += get_path(player.current_room.id, visited)
+            # add a step_back(direction) to path
+            path.append(step_back(player.current_room.get_exits()[-direction]))
+            # step_back
+            player.travel(step_back(player.current_room.get_exits()[-direction]))
+        #else step_back
+        else:
+            player.travel(step_back(player.current_room.get_exits()[-direction]))
+    return path
 
 
-
+traversal_path = get_path(player.current_room)
+# print(get_exits())
 # TRAVERSAL TEST
 visited_rooms = set()
 player.current_room = world.starting_room
 visited_rooms.add(player.current_room)
-
+# player.travel('s')
+# print(player.current_room.id,"<")
 for move in traversal_path:
     player.travel(move)
     visited_rooms.add(player.current_room)
