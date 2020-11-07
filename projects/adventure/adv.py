@@ -46,22 +46,22 @@ def get_path(start, visited = None):
     # add current room to visited set
     visited.add(player.current_room.id)
     # for dir in player.current_room.get_exits() move in that direction
-    for direction in range(1, len(player.current_room.get_exits())):
-        player.travel(player.current_room.get_exits()[-direction])
+    for direction in player.current_room.get_exits():
+        player.travel(direction)
         # if that location is not in the visited set
         if player.current_room.id not in visited:
             # add room to the visited set and add the direction to the path
             visited.add(player.current_room.id)
-            path.append(player.current_room.get_exits()[-direction])
+            path.append(direction)
             # concatincate path with the recursed return of player.current_room.id
             path += get_path(player.current_room.id, visited)
             # add a step_back(direction) to path
-            path.append(step_back(player.current_room.get_exits()[-direction]))
+            path.append(step_back(direction))
             # step_back
-            player.travel(step_back(player.current_room.get_exits()[-direction]))
+            player.travel(step_back(direction))
         #else step_back
         else:
-            player.travel(step_back(player.current_room.get_exits()[-direction]))
+            player.travel(step_back(direction))
     return path
 
 
